@@ -1,0 +1,103 @@
+/* Developer: BANGDET.MD */
+import { Result } from "@/lib/error-handling.js"
+import fs from "fs/promises"
+import { Mutex } from "@/lib/mutex.js"
+
+export type NanoId = string
+
+const DATABASE_ERRORS = {
+    ShopDoesNotExist: {
+        message: 'Shop does not exist',
+        status: 404
+    },
+    ShopAlreadyExists: {
+        message: 'Shop already exists',
+        status: 409
+    },
+    InvalidPosition: {
+        message: 'Invalid position',
+        status: 400
+    },
+
+    CurrencyDoesNotExist: {
+        message: 'Currency does not exist',
+        status: 404
+    },
+    CurrencyAlreadyExists: {
+        message: 'Currency already exists',
+        status: 409
+    },
+
+    ProductDoesNotExist: {
+        message: 'Product does not exist',
+        status: 404
+    },
+    ProductAlreadyExists: {
+        message: 'Produk dengan nama yang sama sudah ada di toko ini',
+        status: 409
+    },
+
+    AccountDoesNotExist: {
+        message: 'Account does not exist',
+        status: 404
+    },
+
+    InvalidSettingType: {
+        message: "Provided setting type is invalid",
+        status: 400
+    },
+    DuplicateSettingName: {
+        message: "Provided setting name already exists",
+        status: 400
+    }
+} as const
+
+export type DatabaseErrors = keyof typeof DATABASE_ERRORS
+export class DatabaseError extends Error {
+    status: number
+    constructor(error: DatabaseErrors) {
+        super(DATABASE_ERRORS[error].message)
+
+        this.name = "DatabaseError"
+        this.status = DATABASE_ERRORS[error].status
+
+        Object.setPrototypeOf(this, DatabaseError.prototype)
+    }
+}
+
+
+export interface DatabaseJSONBody {
+    [key: string]: unknown
+}
+
+export abstract class Database<IdType extends string, DataType> {
+    public path: string
+    public data: Map<IdType, DataType>
+    private saveMutex: Mutex
+
+    public constructor (databaseRaw: DatabaseJSONBody, path: string) {
+        this.path = path
+        this.saveMutex = new Mutex()
+
+        const [error, data] = this.parseRaw(databaseRaw)
+        if (error) throw error
+
+        this.data = data
+    }
+    
+    public abstract toJSON(): DatabaseJSONBody 
+    
+    protected abstract parseRaw(databaseRaw: DatabaseJSONBody): Result<Map<IdType, DataType>, DatabaseError> 
+    
+    public async save () {
+        const release = await this.saveMutex.acquire()
+        try {
+            await fs.writeFile(this.path, JSON.stringify(this.toJSON(), null, 4))
+            return true
+        } catch {
+            return false
+        } finally {
+            release()
+        }
+    }
+}

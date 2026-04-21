@@ -1,0 +1,31 @@
+{
+  "name": "dc-bot",
+  "version": "1.0.0",
+  "description": "Discord Bot with shop, payment, and dashboard",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "deploy": "tsx src/app/deploy-commands.ts",
+    "build": "tsc",
+    "prod": "node dist/index.js"
+  },
+  "keywords": ["discord", "bot", "auto-store", "bangdet.md"],
+  "author": "BANGDET.MD",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.18.0",
+    "dotenv": "^16.4.5",
+    "luxon": "^3.7.2",
+    "nanoid": "^5.0.7",
+    "pakasir-sdk": "^1.0.0",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@types/luxon": "^3.7.1",
+    "@types/node": "^22.0.0",
+    "@types/qrcode": "^1.5.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BangDet Store — Dashboard</title>
+    <meta name="description" content="Dashboard untuk mengelola bot Discord — Shops, Products, Stock, dan lainnya">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon" id="sidebar-logo"><img src="/logo.png" alt="Logo" style="width:32px;height:32px;border-radius:8px;"></span>
+                <span class="logo-text" id="sidebar-name">BangDet Store</span>
+            </div>
+            <span class="version">Dashboard</span>
+        </div>
+
+        <ul class="nav-menu">
+            <!-- Standalone -->
+            <li class="nav-item active" data-page="overview">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Overview</span>
+            </li>
+
+            <!-- Group: Toko -->
+            <li class="nav-group-header" data-group="toko">
+                <span class="nav-group-icon">🏪</span>
+                <span class="nav-label">Toko</span>
+                <span class="nav-group-arrow">▾</span>
+            </li>
+            <ul class="nav-group-children" id="group-toko">
+                <li class="nav-item nav-child" data-page="shops">
+                    <span class="nav-icon">🏬</span>
+                    <span class="nav-label">Shops</span>
+                </li>
+                <li class="nav-item nav-child" data-page="currencies">
+                    <span class="nav-icon">💰</span>
+                    <span class="nav-label">Currencies</span>
+                </li>
+                <li class="nav-item nav-child" data-page="products">
+                    <span class="nav-icon">📦</span>
+                    <span class="nav-label">Products</span>
+                </li>
+            </ul>
+
+            <!-- Group: Pengguna -->
+            <li class="nav-group-header" data-group="pengguna">
+                <span class="nav-group-icon">👥</span>
+                <span class="nav-label">Pengguna</span>
+                <span class="nav-group-arrow">▾</span>
+            </li>
+            <ul class="nav-group-children" id="group-pengguna">
+                <li class="nav-item nav-child" data-page="accounts">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">Accounts</span>
+                </li>
+                <li class="nav-item nav-child" data-page="payments">
+                    <span class="nav-icon">💳</span>
+                    <span class="nav-label">Payments</span>
+                </li>
+            </ul>
+
+            <!-- Group: Sistem -->
+            <li class="nav-group-header" data-group="sistem">
+                <span class="nav-group-icon">⚙️</span>
+                <span class="nav-label">Sistem</span>
+                <span class="nav-group-arrow">▾</span>
+            </li>
+            <ul class="nav-group-children" id="group-sistem">
+                <li class="nav-item nav-child" data-page="settings">
+                    <span class="nav-icon">🔧</span>
+                    <span class="nav-label">Settings</span>
+                </li>
+                <li class="nav-item nav-child" data-page="panels">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-label">Panels</span>
+                </li>
+                <li class="nav-item nav-child" data-page="warranty">
+                    <span class="nav-icon">🛡️</span>
+                    <span class="nav-label">Garansi</span>
+                </li>
+                <li class="nav-item nav-child" data-page="renewal">
+                    <span class="nav-icon">🔄</span>
+                    <span class="nav-label">Renewal</span>
+                </li>
+            </ul>
+        </ul>
+
+        <div class="sidebar-footer">
+            <span>ShopBot v2.4.1</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <header id="page-header">
+            <h1 id="page-title">Overview</h1>
+            <div class="header-actions" id="header-actions"></div>
+        </header>
+
+        <div id="page-content">
+            <!-- Dynamic content loaded here -->
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h2 id="modal-title">Modal</h2>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-footer" id="modal-footer"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast-container"></div>
+
+    <script src="/app.js"></script>
+</body>
+</html>
