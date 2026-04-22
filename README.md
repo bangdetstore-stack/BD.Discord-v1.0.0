@@ -172,7 +172,7 @@ Jika terdapat error seperti *"Unhandled Rejection"* atau *"API Key Not Valid"*, 
 
 Mulai dari versi v4.5.1, seluruh catatan perubahan (*Changelog*), histori fitur, dan *bug fixes* dari versi **v1.0.0 hingga versi terbaru** didokumentasikan secara lengkap dan terpisah.
     
-👉 **[Lihat CHANGELOG.md selengkapnya di sini](./docs/CHANGELOG.md)**  
+👉 **[Lihat CHANGELOG.md selengkapnya di sini](./CHANGELOG.md)**  
 
 ---
 
