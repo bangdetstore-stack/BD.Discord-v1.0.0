@@ -7,16 +7,46 @@
 
 ---
 
-## ✨ Fitur Utama
+## ✨ Fitur Utama (Detailed Features)
 
-- 🛒 **Auto-Store (Shops)**: Sistem toko otomatis di dalam Discord yang siap memproses pesanan 24/7.
-- 💳 **Integrasi Pembayaran (Payment)**: Terintegrasi dengan **Pakasir** untuk pembuatan tagihan dan konfirmasi otomatis (QRIS, E-Wallet, dll).
-- 👤 **Manajemen Akun (Accounts)**: Mengelola data pengguna, inventaris, dan riwayat transaksi.
-- 💰 **Sistem Saldo (Currencies)**: Sistem mata uang virtual/saldo internal untuk transaksi tanpa payment gateway.
-- 🔄 **Langganan (Renewal)**: Mengelola pembelian produk berlangganan secara berkala.
-- 🛡️ **Garansi (Warranty)**: Mengatur klaim garansi untuk produk-produk digital.
-- 🎭 **Manajemen Role (Roles)**: Pemberian role otomatis setelah transaksi sukses.
-- 📌 **Pesan Lengket (Sticky)**: Pesan otomatis yang akan selalu berada di bagian bawah channel (misalnya untuk informasi toko atau terms).
+### 1. 🛍️ Auto-Store & Panel System (Toko Otomatis)
+- **Panel Interaktif**: Toko ditampilkan menggunakan Dropdown (Select Menu) dan Button dari Discord UI, sehingga user-friendly.
+- **Kategorisasi**: Mendukung banyak sub-toko dan produk dalam satu bot. Setiap toko bisa memiliki custom emoji dan deskripsi.
+- **Stok Otomatis (Stock Handler)**: Menggunakan `stock-database.json` untuk manajemen stok. Bot akan mengambil 1 stok teratas (*Shift*) secara otomatis ketika pembayaran berhasil dan mengirimkannya ke DM pembeli.
+
+### 2. 💳 Payment Gateway Integration (Pakasir)
+- **QRIS Otomatis**: Generate QR code pembayaran secara real-time via **Pakasir SDK**.
+- **Webhook Listener**: Bot ini dilengkapi HTTP Server mandiri untuk menerima notifikasi (*callback/webhook*) dari Pakasir saat pembayaran berhasil (Lunas).
+- **Idempotency Guard**: Keamanan ekstra untuk memastikan tidak ada pengiriman barang ganda (*double delivery*) meskipun webhook terpanggil berulang kali.
+- **Auto-Expired**: Tagihan yang tidak dibayar dalam 15 menit akan otomatis kedaluwarsa dan membatalkan pesanan.
+
+### 3. 🛡️ Sistem Garansi & Komplain (Warranty & Claim Ticket)
+- **Form Garansi Dinamis**: Pembeli diberi batas waktu tertentu (misal: 24 jam) untuk mengisi form garansi via Discord Modal.
+- **Verifikasi Screenshot**: Bot dapat meminta user mengunggah bukti screenshot login melalui DM bot untuk memvalidasi garansi.
+- **Private Thread Ticket (Komplain)**: Jika garansi aktif, pembeli dapat menggunakan `/komplain` atau tombol **Ajukan Komplain**. Bot akan membuat *Private Thread* khusus antara pembeli dan Role Admin Komplain (sehingga chat aman dan rapi).
+- **Kompensasi Waktu**: Jika komplain memakan waktu lebih dari 24 jam, masa garansi user otomatis diperpanjang sesuai durasi penyelesaian komplain.
+
+### 4. 🔄 Sistem Perpanjangan Otomatis (Renewal System)
+- **Background Checker**: Bot memiliki *checker* (setiap 30 menit) yang mengecek garansi yang akan habis (H-4).
+- **Admin Approval**: Bot mengirim notifikasi ke channel admin untuk menyetujui atau menolak perpanjangan.
+- **Durasi Dinamis (30/60/90 Hari)**: Jika admin setuju, bot akan mengirim DM ke user dengan penawaran harga dinamis sesuai durasi yang dipilih. User bisa langsung bayar pakai QRIS!
+
+### 5. 👥 Manajemen Role & Loyalitas Otomatis
+- **Role Buyer & Produk**: Otomatis memberikan role "Buyer" dan role khusus produk (Misal: Role Netflix / Role Spotify) saat transaksi berhasil.
+- **Role VIP**: Sistem otomatis mendeteksi pengguna setia. Jika user melakukan transaksi melebihi ambang batas (misal: 10x dalam 30 hari), ia otomatis mendapatkan Role VIP.
+- **Role Join**: Memberikan role default otomatis saat member baru masuk ke server.
+
+### 6. 👤 Sistem Akun, Inventaris, & Ekonomi (Currencies)
+- **Database Profil**: Setiap user memiliki database inventaris produk yang mereka beli dan riwayat transaksi (*Purchase History*).
+- **Virtual Currency**: Mendukung pembuatan mata uang virtual untuk transaksi alternatif selain uang asli (Rupiah).
+
+### 7. ⚙️ Dashboard Web & API Server
+- Bot berjalan bersamaan dengan mini-server HTTP untuk melayani endpoint API statis dashboard admin.
+- Seluruh konfigurasi (seperti ID Channel Log, Role Admin, Bahasa Bot) disimpan secara tersentralisasi pada `settings.json` yang dapat diubah kapan saja.
+
+### 8. 🌐 Multi-Language (i18n) & Sticky Messages
+- Mendukung *Localization* (Inggris, Spanyol, Prancis) pada nama dan deskripsi slash command.
+- **Sticky Messages**: Pesan lengket otomatis (Terms & Conditions, panduan order) yang terus mengikuti chat paling bawah di channel toko.
 
 ---
 
@@ -138,18 +168,11 @@ Jika terdapat error seperti *"Unhandled Rejection"* atau *"API Key Not Valid"*, 
 
 ---
 
-## 📝 Changelog
+## 📝 Changelog & Riwayat Versi
 
-### v4.5.0 - Arsitektur Database Async & Sentralisasi Config
-- **Refactoring:** Migrasi besar-besaran I/O sinkron (`fs.readFileSync`) menjadi asinkron (`fs/promises`) untuk semua modul.
-- **Keamanan:** Menerapkan `Mutex` global pada `Database.save()` untuk mencegah *data corruption* akibat tingginya request bersamaan (Race Conditions).
-- **Idempotency:** Menambahkan *Idempotency Guard* pada `deliverItem` via `delivered-orders.json` untuk mencegah pengiriman item dobel saat terjadi spam webhook.
-- **Sentralisasi Settings:** Memindahkan semua hardcoded Role ID (Role Join, Role VIP, Role Shop seperti Netflix/Spotify) ke dalam `settings.json` sehingga dapat dikonfigurasi via perintah `/settings` di Discord.
-- **Perbaikan Bug:** 
-  - *Ticket Counter* komplain otomatis bertambah (Auto-increment) dan disimpan ke `data/ticket-counter.json`.
-  - Timer *Pending Screenshots* garansi tidak lagi hilang saat bot direstart karena disimpan ke database.
-  - Fix loop infinite pada *Sticky Message* jika isi pesan bot sama dengan teks sticky.
-- **Clean-up:** Konsolidasi seluruh rahasia API dan token Discord dari `config.json` menjadi satu pintu di `.env`. Penghapusan fungsi *legacy* panel setup.
+Mulai dari versi v4.5.1, seluruh catatan perubahan (*Changelog*), histori fitur, dan *bug fixes* dari versi **v1.0.0 hingga versi terbaru** didokumentasikan secara lengkap dan terpisah.
+    
+👉 **[Lihat CHANGELOG.md selengkapnya di sini](./docs/CHANGELOG.md)**  
 
 ---
 
